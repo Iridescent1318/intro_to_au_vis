@@ -35,4 +35,4 @@ ref_height2 = j.ref_height2;
 %lines: several lines in the reference plain
 
 %What you should do is to accomplish the following function
-height = myHeightEstimator(img,mask_ground,mask_target,mask_person1,mask_person2,ref_height1,ref_height2,point_target,lines);
+height = HeightEstimator(img,mask_ground,mask_target,mask_person1,mask_person2,ref_height1,ref_height2,point_target,lines);
