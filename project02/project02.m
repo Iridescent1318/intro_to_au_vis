@@ -23,35 +23,36 @@ for n = 1:sample_num
     L = length(y(:, 1));
     % t = (0:L-1)/Fs;
 
+    % Select the first 15 sample points for each side
     num = 15;
     tau = (0:num-1) / Fs;
-    Rt1 = zeros(1, num);
-    Rt2 = zeros(1, num);
+    Rt1 = zeros(1, num); % Positive side (for 0~90)
+    Rt2 = zeros(1, num); % Negative side (for 90~180)
     yf = fft(y);
-    alpha = 0.648;
+    rho = 0.648;
 
     for iter=1:num
-        cc1 = yf(:, 1) .* conj(yf(:, 2));
-        cc1 = cc1 ./ (abs(yf(:, 1)) .* abs(yf(:, 2))).^ alpha;
-        cc2 = yf(:, 2) .* conj(yf(:, 1));
-        cc2 = cc2 ./ (abs(yf(:, 1)) .* abs(yf(:, 2))).^ alpha;
+        c_pos = yf(:, 1) .* conj(yf(:, 2));
+        c_pos = c_pos ./ (abs(yf(:, 1)) .* abs(yf(:, 2))).^ rho;
+        c_neg = yf(:, 2) .* conj(yf(:, 1));
+        c_neg = c_neg ./ (abs(yf(:, 1)) .* abs(yf(:, 2))).^ rho;
         ks = 0:length(yf(:, 1))-1;
         es = exp(1i*2*pi*(iter-1).*ks/length(ks));
-        cc1 = cc1 .* es.';
-        Rt1(iter) = sum(cc1);
-        cc2 = cc2 .* es.';
-        Rt2(iter) = sum(cc2);    
+        c_pos = c_pos .* es.';
+        Rt1(iter) = sum(c_pos);
+        c_neg = c_neg .* es.';
+        Rt2(iter) = sum(c_neg);    
     end
 
     tau = (-num+1:num-1)/Fs;
-    Rt = [Rt2(end:-1:2), Rt1];
+    Rt = [Rt2(end:-1:2), Rt1]; % Merge both sides. Totally 29 Samples with center tau=0
     if(TRAINING_SET == 1)
         subplot(4, 4, n)
         plot(tau, abs(Rt))
         xlabel(n)
     end
     [rs, idx] = sort(abs(Rt), 'descend');
-    topmany = 3;
+    topmany = 3; % Find the top 3 greatest values and indices
     idx_top = tau(idx(1:topmany));
     rt_top = Rt(idx(1:topmany));
     avg = dot(idx_top, rt_top) / sum(rt_top);
@@ -68,7 +69,7 @@ if(TRAINING_SET == 1)
     deg
     e = abs(ground_truth' - deg)
     err_mean = mean(e)
-    err_mean_without_outlier = (sum(e)-max(e))/(length(e)-1)
+    err_mean_without_outlier = (sum(e)-max(e))/(length(e)-1) % Avg after deleting greatest error
 else
     dlmwrite("result.txt", deg,'delimiter',  '\n', 'precision', '%.7f');
     disp("Output file 'result.txt' created.");
