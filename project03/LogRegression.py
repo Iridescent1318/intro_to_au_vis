@@ -49,21 +49,52 @@ class LogRegression:
                         loss += (dp + self.bias) * (1 - ys[j])
                     else:
                         loss += math.log(1+math.exp(dp + self.bias)) - (dp + self.bias) * ys[j]
-                return w_grad, b_grad, loss
+                return loss
             else:
                 raise Exception("Dimension of x and weights should be equal.")
         else:
             raise Exception("Length of x's and y's should be equal.")
-        pass
 
-    def quasi_newton(self, xs, ys):
-        pass
+    def newton_method(self, xs, ys, l_rate):
+        if xs.shape[0] == ys.shape[0]:
+            if xs.shape[1] == self.weights.shape[0]:
+                w_grad = np.zeros(self.weights.shape)
+                w_hessian = np.eye(xs.shape[1])
+                b_grad = 0
+                b_hessian = 0.1
+                loss = 0
+                for j in range(xs.shape[0]):
+                    y_hat = self.get_sigmoid(xs[j, :])
+                    w_grad += (y_hat - ys[j]) * xs[j, :]
+                    w_hessian += y_hat * (1 - y_hat) * np.matmul(xs[j, :].T, xs[j, :])
+                    b_grad += (y_hat - ys[j])
+                    b_hessian += y_hat * (1 - y_hat)
+                w_hessian_inv = np.linalg.inv(w_hessian)
+                self.weights += -l_rate * np.matmul(w_grad, w_hessian_inv.T)
+                self.bias += -l_rate * b_grad / b_hessian
+                for j in range(xs.shape[0]):
+                    dp = np.dot(xs[j, :], self.weights)
+                    if dp + self.bias > 10:
+                        loss += (dp + self.bias) * (1 - ys[j])
+                    else:
+                        loss += math.log(1+math.exp(dp + self.bias)) - (dp + self.bias) * ys[j]
+                return loss
+            else:
+                raise Exception("Dimension of x and weights should be equal.")
+        else:
+            raise Exception("Length of x's and y's should be equal.")
 
-    def fit(self, xs, ys, max_epoch_num=500, l_rate=1e-2, tol=1e-3, loss_vis_step=10, visualize=False, vis_epoch_step=10):
+    def fit(self, xs, ys, max_epoch_num=500, l_rate=1e-2, tol=1e-3, method='bgd', loss_vis_step=10, visualize=False, vis_epoch_step=10):
         prev_loss = 0
         loss_list = []
         for en in range(max_epoch_num):
-            w_grad, b_grad, cur_loss = self.batch_grad_descent(xs, ys, l_rate)
+            if method == 'bgd':
+                cur_loss = self.batch_grad_descent(xs, ys, l_rate)
+            else:
+                if method == 'newton':
+                    cur_loss = self.newton_method(xs, ys, l_rate)
+                else:
+                    raise Exception("Invalid method")
             if en % loss_vis_step == 0 and en:
                 loss_list.append(cur_loss)
             if prev_loss and math.fabs(prev_loss-cur_loss)/cur_loss < tol:

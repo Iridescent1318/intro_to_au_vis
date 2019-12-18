@@ -25,8 +25,8 @@ if __name__ == '__main__':
     for cn in range(cv_num):
         x_train, y_train, x_cvtest, y_cvtest = cross_validation(chara_vectors_train, chara_results_train, k)
         lr = LogRegression(chara_vectors_train.shape[1])
-        skt_lr = LogisticRegression(random_state=0, solver='liblinear').fit(x_train, y_train)
-        loss = lr.fit(x_train, y_train, epoch_num, 0.08, 1e-4, 'bgd', loss_visual_step)
+        skt_lr = LogisticRegression(random_state=0, solver='newton-cg').fit(x_train, y_train)
+        loss = lr.fit(x_train, y_train, epoch_num, 0.08, 1e-4, 'newton', loss_visual_step)
         y_pred = lr.predict(x_cvtest)
         prec[cn] = score(y_pred, y_cvtest)
         prec_skt[cn] = skt_lr.score(x_cvtest, y_cvtest)
