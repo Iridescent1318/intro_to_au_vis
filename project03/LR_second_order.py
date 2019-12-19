@@ -34,6 +34,6 @@ if __name__ == '__main__':
 
     print("sklearn LR accuracy: {}".format(prec_skt))
     print("Precision:           {}".format(prec))
-    print("Mean sklearn LR accuracy: {:.4f}±{:.4f}".format(np.mean(prec_skt), np.std(prec_skt)))
-    print("Mean precision:           {:.4f}±{:.4f}".format(np.mean(prec), np.std(prec)))
+    print("Mean sklearn LR accuracy: {:.4f}".format(np.mean(prec_skt)))
+    print("Mean precision:           {:.4f}".format(np.mean(prec)))
     plt.show()
