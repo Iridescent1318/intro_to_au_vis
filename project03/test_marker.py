@@ -30,12 +30,13 @@ def play_audio(filename):
 
 def mark():
     while True:
-        response = input("Is this debate drastic? \nYes: enter 'p' \nNo: enter 'n'. ")
-        if response == 'p':
+        response = input("Is this debate drastic? Yes: enter 'y'  No: enter 'n'  Not sure: enter 'i'")
+        if response == 'y':
             return 1
-        else:
-            if response == 'n':
-                return 0
+        if response == 'n':
+            return 0
+        if response == 'i':
+            return 2
 
 
 if __name__ == '__main__':
@@ -55,7 +56,7 @@ if __name__ == '__main__':
                 print("Audio stops now.")
                 result[i] = mark()
                 np.save("test_result.npy", result)
-            print("Annotation ends. ")
+            print("You've finished all the annotation. ")
         else:
             print("You've finished all the annotation. ")
     else:
