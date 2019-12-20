@@ -2,6 +2,7 @@ import numpy as np
 import librosa
 import librosa.display
 import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
 from sklearn import svm
 from LogRegression import cross_validation, score
 
@@ -33,15 +34,27 @@ if __name__ == '__main__':
         au_xs_train = np.load("au_feat_xs.npy")
         au_ys_train = np.load("au_feat_ys.npy")
 
-    k = 2
-    cv_num = 1
+    k = 8
+    cv_num = 10
+
+    prec_svm = np.zeros(cv_num)
+    prec_skt = np.zeros(cv_num)
 
     for cn in range(cv_num):
         x_train, y_train, x_cvtest, y_cvtest = cross_validation(au_xs_train, au_ys_train, k)
         au_clf = svm.SVC()
         au_clf.fit(x_train, y_train)
-        y_pred = au_clf.predict(x_cvtest)
-        print("Predictions: {}".format(y_pred))
-        print("Real:        {}".format(y_cvtest))
-        precision = score(y_pred, y_cvtest)
-        print("Precision: {}".format(precision))
+        skt_lr = LogisticRegression(random_state=0, solver='liblinear').fit(x_train, y_train)
+        y_pred_svm = au_clf.predict(x_cvtest)
+        y_pred_skt = skt_lr.predict(x_cvtest)
+        print("Predictions of SVM: {}".format(y_pred_svm))
+        print("Predictions of skt: {}".format(y_pred_skt))
+        print("Real:               {}".format(y_cvtest))
+        prec_svm[cn] = score(y_pred_svm, y_cvtest)
+        prec_skt[cn] = score(y_pred_skt, y_cvtest)
+
+    print("Precision of SVM: {}".format(prec_svm))
+    print("Precision of skt: {}".format(prec_skt))
+    print("Mean Precision of SVM: {}".format(np.mean(prec_svm)))
+    print("Mean Precision of skt: {}".format(np.mean(prec_skt)))
+
