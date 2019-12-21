@@ -41,11 +41,13 @@ class LogRegression:
                     y_hat = self.get_sigmoid(xs[j, :])
                     w_grad += (y_hat - ys[j]) * xs[j, :]
                     b_grad += (y_hat - ys[j])
+                w_grad /= xs.shape[0]
+                b_grad /= xs.shape[0]
                 self.weights = self.weights - l_rate * w_grad
                 self.bias = self.bias - l_rate * b_grad
                 for j in range(xs.shape[0]):
                     dp = np.dot(xs[j, :], self.weights)
-                    if dp + self.bias > 10:
+                    if dp + self.bias > 20:
                         loss += (dp + self.bias) * (1 - ys[j])
                     else:
                         loss += math.log(1+math.exp(dp + self.bias)) - (dp + self.bias) * ys[j]
@@ -69,6 +71,8 @@ class LogRegression:
                     w_hessian += y_hat * (1 - y_hat) * np.matmul(xs[j, :].T, xs[j, :])
                     b_grad += (y_hat - ys[j])
                     b_hessian += y_hat * (1 - y_hat)
+                w_grad /= xs.shape[0]
+                b_grad /= xs.shape[0]
                 w_hessian_inv = np.linalg.inv(w_hessian)
                 self.weights += -l_rate * np.matmul(w_grad, w_hessian_inv.T)
                 self.bias += -l_rate * b_grad / b_hessian
@@ -105,7 +109,6 @@ class LogRegression:
                 if en % vis_epoch_step == 0:
                     print("--------------------------------Epoch:{}--------------------------------".format(en))
                     print("weights: {} \n bias:   {}".format(self.weights, self.bias))
-                    print("w_grad:  {} \n b_grad: {}".format(w_grad, b_grad))
                     print("loss: {}".format(cur_loss))
                     print("------------------------------------------------------------------------")
         return loss_list

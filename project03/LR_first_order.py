@@ -17,8 +17,8 @@ if __name__ == '__main__':
             im_xs_train[i, :] = np.load("./dataset/train/negative/{}/feat.npy".format(i-100))
             im_ys_train[i] = 0
 
-    k = 8
-    cv_num = 10
+    k = 5
+    cv_num = 5
     max_epoch = 500
     loss_visual_step = 10
         
@@ -29,10 +29,13 @@ if __name__ == '__main__':
             x_train, y_train, x_cvtest, y_cvtest = cross_validation(im_xs_train, im_ys_train, k)
             lr = LogRegression(im_xs_train.shape[1])
             skt_lr = LogisticRegression(random_state=0, solver='liblinear').fit(x_train, y_train)
-            loss = lr.fit(x_train, y_train, max_epoch, 0.08, 1e-4, 'bgd', loss_visual_step)
+            loss = lr.fit(x_train, y_train, max_epoch, 0.18, 1e-4, 'newton', loss_visual_step)
             y_pred = lr.predict(x_cvtest)
+            y_pred_skt = skt_lr.predict(x_cvtest)
             prec[cn] = score(y_pred, y_cvtest)
             prec_skt[cn] = skt_lr.score(x_cvtest, y_cvtest)
+            print("Prediction: {}".format(y_pred))
+            print("Real:       {}".format(y_cvtest))
             plt.plot((np.arange(len(loss))+1) * loss_visual_step, loss)
     
         print("sklearn LR accuracy: {}".format(prec_skt))
@@ -45,14 +48,19 @@ if __name__ == '__main__':
         im_ys_test = np.load("./test_result.npy")
 
         for i in range(100):
-            im_xs_train[i, :] = np.load("./dataset/test/{}/feat.npy".format(i))
+            im_xs_test[i, :] = np.load("./dataset/test/{}/feat.npy".format(i))
 
         lr = LogRegression(im_xs_train.shape[1])
         loss = lr.fit(im_xs_train, im_ys_train, max_epoch, l_rate=0.08, tol=1e-4, method='bgd')
-        y_pred = lr.predict(im_xs_test)
-        precision = score(y_pred, im_ys_test)
-        print("Precision: {}".format(precision))
+        y_pred_bgd = lr.predict(im_xs_test)
+        prec_bgd = score(y_pred_bgd, im_ys_test)
+        print(y_pred_bgd)
+        print("Precision: {}".format(prec_bgd))
 
         skt_lr = LogisticRegression(random_state=0, solver='liblinear').fit(im_xs_train, im_ys_train)
-        precision = skt_lr.score(im_xs_test, im_ys_test)
-        print("Precision: {}".format(precision))
+        y_pred_skt = skt_lr.predict(im_xs_test)
+        prec_skt = skt_lr.score(im_xs_test, im_ys_test)
+        print(y_pred_skt)
+        print(im_ys_test)
+        print("Precision: {}".format(prec_skt))
+        np.save("A_1st_order.npy", y_pred_bgd)

@@ -1,7 +1,5 @@
 import numpy as np
-import librosa
 import librosa.display
-import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn import svm
 from LogRegression import cross_validation, score
@@ -70,10 +68,12 @@ if __name__ == '__main__':
         print("Precision of skt: {}".format(prec_skt))
         print("Mean Precision of SVM: {}".format(np.mean(prec_svm)))
         print("Mean Precision of skt: {}".format(np.mean(prec_skt)))
-
     else:
-
         clf = svm.SVC(gamma='scale')
         clf.fit(au_xs_train, au_ys_train)
+        y_pred = clf.predict(au_xs_test)
         precision = clf.score(au_xs_test, au_ys_test)
         print("Precision: {}".format(precision))
+        print("Prediction: {}".format(y_pred))
+        print("Real:       {}".format(au_ys_test))
+        np.save("B.npy", y_pred)
