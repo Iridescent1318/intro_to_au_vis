@@ -34,7 +34,7 @@ if __name__ == '__main__':
         au_xs_train = np.load("au_feat_xs.npy")
         au_ys_train = np.load("au_feat_ys.npy")
 
-    k = 8
+    k = 2
     cv_num = 10
 
     prec_svm = np.zeros(cv_num)
@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     for cn in range(cv_num):
         x_train, y_train, x_cvtest, y_cvtest = cross_validation(au_xs_train, au_ys_train, k)
-        au_clf = svm.SVC()
+        au_clf = svm.SVC(gamma='scale')
         au_clf.fit(x_train, y_train)
         skt_lr = LogisticRegression(random_state=0, solver='liblinear').fit(x_train, y_train)
         y_pred_svm = au_clf.predict(x_cvtest)
