@@ -15,7 +15,7 @@ if __name__ == '__main__':
             im_xs_train[i, :] = np.load("./dataset/train/negative/{}/feat.npy".format(i-100))
             im_ys_train[i] = 0
 
-    k = 8
+    k = 4
     cv_num = 1
     max_epoch = 1000
     loss_visual_step = 10
@@ -35,10 +35,9 @@ if __name__ == '__main__':
         prec_bgd[cn] = score(y_pred_bgd, y_cvtest)
         prec_newton[cn] = score(y_pred_newton, y_cvtest)
         prec_skt[cn] = skt_lr.score(x_cvtest, y_cvtest)
-        plt.plot((np.arange(len(loss_bgd))+1) * loss_visual_step, loss_bgd)
-        plt.legend("BGD")
+        plt.plot((np.arange(len(loss_bgd)) + 1) * loss_visual_step, loss_bgd)
         plt.plot((np.arange(len(loss_newton)) + 1) * loss_visual_step, loss_newton)
-        plt.legend("Newton")
+        plt.legend(["BGD", "Newton"])
 
     print("sklearn LR accuracy:      {}".format(prec_skt))
     print("BGD Precision:            {}".format(prec_bgd))

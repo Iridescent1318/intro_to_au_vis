@@ -5,7 +5,7 @@ from sklearn import svm
 from LogRegression import cross_validation, score
 
 FEAT_EXT_MODE = 0
-CROSS_VALID_MODE = 0
+CROSS_VALID_MODE = 1
 
 if __name__ == '__main__':
     num_mfcc = 1
@@ -44,7 +44,7 @@ if __name__ == '__main__':
         au_xs_test = np.load("au_xs_test.npy")
         au_ys_test = np.load("./test_result.npy")
 
-    k = 2
+    k = 10
     cv_num = 10
 
     if CROSS_VALID_MODE:

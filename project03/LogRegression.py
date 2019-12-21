@@ -31,6 +31,18 @@ class LogRegression:
                                                                                                    x.shape))
         pass
 
+    def get_loss(self, xs, ys):
+        if xs.shape[1] == self.weights.shape[0]:
+            loss = 0
+            for j in range(xs.shape[0]):
+                dp = np.dot(xs[j, :], self.weights)
+                if dp + self.bias > 10:
+                    loss += (dp + self.bias) * (1 - ys[j])
+                else:
+                    loss += math.log(1 + math.exp(dp + self.bias)) - (dp + self.bias) * ys[j]
+            return loss
+        pass
+
     def batch_grad_descent(self, xs, ys, l_rate):
         if xs.shape[0] == ys.shape[0]:
             if xs.shape[1] == self.weights.shape[0]:
@@ -61,10 +73,9 @@ class LogRegression:
         if xs.shape[0] == ys.shape[0]:
             if xs.shape[1] == self.weights.shape[0]:
                 w_grad = np.zeros(self.weights.shape)
-                w_hessian = np.eye(xs.shape[1])
+                w_hessian = np.zeros((xs.shape[1], xs.shape[1]))
                 b_grad = 0
-                b_hessian = 0.1
-                loss = 0
+                b_hessian = 0
                 for j in range(xs.shape[0]):
                     y_hat = self.get_sigmoid(xs[j, :])
                     w_grad += (y_hat - ys[j]) * xs[j, :]
@@ -73,15 +84,17 @@ class LogRegression:
                     b_hessian += y_hat * (1 - y_hat)
                 w_grad /= xs.shape[0]
                 b_grad /= xs.shape[0]
-                w_hessian_inv = np.linalg.inv(w_hessian)
+                w_hessian /= xs.shape[0]
+
+                if np.linalg.det(w_hessian):
+                    w_hessian_inv = np.linalg.inv(w_hessian)
+                else:
+                    w_hessian += np.eye(xs.shape[1])
+                    w_hessian_inv = np.linalg.inv(w_hessian)
+
                 self.weights += -l_rate * np.matmul(w_grad, w_hessian_inv.T)
                 self.bias += -l_rate * b_grad / b_hessian
-                for j in range(xs.shape[0]):
-                    dp = np.dot(xs[j, :], self.weights)
-                    if dp + self.bias > 10:
-                        loss += (dp + self.bias) * (1 - ys[j])
-                    else:
-                        loss += math.log(1+math.exp(dp + self.bias)) - (dp + self.bias) * ys[j]
+                loss = self.get_loss(xs, ys)
                 return loss
             else:
                 raise Exception("Dimension of x and weights should be equal.")
@@ -91,6 +104,7 @@ class LogRegression:
     def fit(self, xs, ys, max_epoch_num=500, l_rate=1e-2, tol=1e-3, method='bgd', loss_vis_step=10, visualize=False, vis_epoch_step=10):
         prev_loss = 0
         loss_list = []
+        self.set_weights(np.random.normal(size=self.weights.shape))
         for en in range(max_epoch_num):
             if method == 'bgd':
                 cur_loss = self.batch_grad_descent(xs, ys, l_rate)

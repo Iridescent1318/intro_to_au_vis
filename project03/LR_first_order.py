@@ -3,7 +3,7 @@ from sklearn.linear_model import LogisticRegression
 from matplotlib import pyplot as plt
 from LogRegression import score, cross_validation, LogRegression
 
-CROSS_VALID_MODE = 0
+CROSS_VALID_MODE = 1
 
 if __name__ == '__main__':
     im_xs_train = np.ones((200, 13))

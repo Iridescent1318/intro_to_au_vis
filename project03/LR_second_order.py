@@ -18,7 +18,7 @@ if __name__ == '__main__':
             im_ys_train[i] = 0
 
     k = 8
-    cv_num = 10
+    cv_num = 1
     max_epoch = 500
     loss_visual_step = 10
 
