@@ -2,13 +2,14 @@ import numpy as np
 import librosa.display
 from sklearn.linear_model import LogisticRegression
 from sklearn import svm
-from LogRegression import cross_validation, accuracy_score
+from LogRegression import cross_validation
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 FEAT_EXT_MODE = 0
 CROSS_VALID_MODE = 1
 
 if __name__ == '__main__':
-    num_mfcc = 2
+    num_mfcc = 1
     if FEAT_EXT_MODE:
         au_test, au_sr = librosa.load("./dataset/train/positive/0/audio.wav")
         au_test = librosa.feature.mfcc(au_test, au_sr, n_mfcc=num_mfcc).reshape(-1)
@@ -44,12 +45,18 @@ if __name__ == '__main__':
         au_xs_test = np.load("au_xs_test.npy")
         au_ys_test = np.load("./test_result.npy")
 
-    k = 10
-    cv_num = 10
+    k = 5
+    cv_num = 5
 
     if CROSS_VALID_MODE:
         acc_svm = np.zeros(cv_num)
+        prec_svm = np.zeros(cv_num)
+        recall_svm = np.zeros(cv_num)
+        f1_svm = np.zeros(cv_num)
         acc_skt = np.zeros(cv_num)
+        prec_skt = np.zeros(cv_num)
+        recall_skt = np.zeros(cv_num)
+        f1_skt = np.zeros(cv_num)
 
         for cn in range(cv_num):
             x_train, y_train, x_cvtest, y_cvtest = cross_validation(au_xs_train, au_ys_train, k)
@@ -58,22 +65,44 @@ if __name__ == '__main__':
             skt_lr = LogisticRegression(random_state=0, solver='liblinear').fit(x_train, y_train)
             y_pred_svm = au_clf.predict(x_cvtest)
             y_pred_skt = skt_lr.predict(x_cvtest)
+
             print("Predictions of SVM: {}".format(y_pred_svm))
             print("Predictions of skt: {}".format(y_pred_skt))
             print("True:               {}".format(y_cvtest))
-            acc_svm[cn] = accuracy_score(y_pred_svm, y_cvtest)
-            acc_skt[cn] = accuracy_score(y_pred_skt, y_cvtest)
 
-        print("Accuracy of SVM: {}".format(acc_svm))
-        print("Accuracy of skt: {}".format(acc_skt))
-        print("Mean accuracy of SVM: {}".format(np.mean(acc_svm)))
-        print("Mean accuracy of skt: {}".format(np.mean(acc_skt)))
+            acc_svm[cn] = accuracy_score(y_cvtest, y_pred_svm)
+            prec_svm[cn] = precision_score(y_cvtest, y_pred_svm)
+            recall_svm[cn] = recall_score(y_cvtest, y_pred_svm)
+            f1_svm[cn] = f1_score(y_cvtest, y_pred_svm)
+            acc_skt[cn] = accuracy_score(y_cvtest, y_pred_skt)
+            prec_skt[cn] = precision_score(y_cvtest, y_pred_skt)
+            recall_skt[cn] = recall_score(y_cvtest, y_pred_skt)
+            f1_skt[cn] = f1_score(y_cvtest, y_pred_skt)
+
+        print("SVM accuracy:  {}".format(acc_svm))
+        print("SVM precision: {}".format(prec_svm))
+        print("SVM recall:    {}".format(recall_svm))
+        print("SVM F1-score : {}".format(f1_svm))
+        print("skt accuracy:  {}".format(acc_skt))
+        print("skt precision: {}".format(prec_skt))
+        print("skt recall:    {}".format(recall_skt))
+        print("skt F1-score : {}".format(f1_skt))
+        print("SVM mean accuracy: {:.4f} precision: {:.4f} recall: {:.4f} f1-score:{:.4f}".format(
+            np.mean(acc_svm), np.mean(prec_svm), np.mean(recall_svm), np.mean(acc_svm)))
+        print("skt mean accuracy: {:.4f} precision: {:.4f} recall: {:.4f} f1-score:{:.4f}".format(
+            np.mean(acc_skt), np.mean(prec_skt), np.mean(recall_skt), np.mean(acc_skt)))
     else:
         clf = svm.SVC(gamma='scale')
         clf.fit(au_xs_train, au_ys_train)
         y_pred = clf.predict(au_xs_test)
-        accuracy = clf.score(au_xs_test, au_ys_test)
+        accuracy = accuracy_score(au_ys_test, y_pred)
+        precision = precision_score(au_ys_test, y_pred)
+        recall = recall_score(au_ys_test, y_pred)
+        f1 = f1_score(au_ys_test, y_pred)
         print("Prediction: {}".format(y_pred))
         print("True:       {}".format(au_ys_test))
-        print("Accuracy: {}".format(accuracy))
+        print("Accuracy:   {:.4f}".format(accuracy))
+        print("Precision:  {:.4f}".format(accuracy))
+        print("Recall:     {:.4f}".format(accuracy))
+        print("F1-score  : {:.4f}".format(accuracy))
         np.save("B.npy", y_pred)

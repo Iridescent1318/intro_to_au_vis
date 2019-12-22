@@ -2,11 +2,10 @@ import numpy as np
 from sklearn import svm
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import precision_score, recall_score, roc_auc_score
-from LogRegression import accuracy_score
+from sklearn.metrics import precision_score, recall_score, accuracy_score, f1_score
 
 CROSS_VALID_MODE = 0
-TRAIN_MODE = 'feat_combine'
+TRAIN_MODE = 'ensemble'
 
 if __name__ == '__main__':
     im_xs_train = np.ones((200, 13))
@@ -45,6 +44,7 @@ if __name__ == '__main__':
             acc = np.zeros(cv_num)
             pred = np.zeros(cv_num)
             recall = np.zeros(cv_num)
+            f1 = np.zeros(cv_num)
             for cn in range(cv_num):
                 clfs = []
                 (ia_x_train, ia_x_test, ia_y_train, ia_y_test) = train_test_split(im_au_xs_train, im_au_ys_train,
@@ -61,16 +61,19 @@ if __name__ == '__main__':
                     y_pred_all += clf.predict(ia_x_test)
 
                 y_pred_all = np.where(y_pred_all > clf_num / 2, 1, 0)
-                acc[cn] = accuracy_score(y_pred_all, ia_y_test)
+                acc[cn] = accuracy_score(ia_y_test, y_pred_all)
                 pred[cn] = precision_score(ia_y_test, y_pred_all)
                 recall[cn] = recall_score(ia_y_test, y_pred_all)
+                f1[cn] = f1_score(ia_y_test, y_pred_all)
 
-            print("Precision:           {}".format(pred))
-            print("Mean precision:  {:.4f}".format(np.mean(pred)))
-            print("Recall   :           {}".format(recall))
-            print("Mean recall   :  {:.4f}".format(np.mean(recall)))
             print("Accuracy:            {}".format(acc))
+            print("Precision:           {}".format(pred))
+            print("Recall:              {}".format(recall))
+            print("F1:                  {}".format(f1))
             print("Mean accuracy:   {:.4f}".format(np.mean(acc)))
+            print("Mean precision:  {:.4f}".format(np.mean(pred)))
+            print("Mean recall   :  {:.4f}".format(np.mean(recall)))
+            print("Mean f1-score:   {:.4f}".format(np.mean(f1)))
 
         else:
             clfs = []
@@ -88,18 +91,21 @@ if __name__ == '__main__':
 
             print("Predict: {}".format(y_pred_all))
             print("True:    {}".format(im_au_ys_test))
-            accuracy = accuracy_score(y_pred_all, im_au_ys_test)
+            accuracy = accuracy_score(im_au_ys_test, y_pred_all)
             precision = precision_score(im_au_ys_test, y_pred_all)
             recall = recall_score(im_au_ys_test, y_pred_all)
-            print("Accuracy:  {}".format(accuracy))
-            print("Precision: {}".format(precision))
-            print("Recall:    {}".format(recall))
+            f1 = f1_score(im_au_ys_test, y_pred_all)
+            print("Accuracy:  {:.4f}".format(accuracy))
+            print("Precision: {:.4f}".format(precision))
+            print("Recall:    {:.4f}".format(recall))
+            print("F1-score:  {:.4f}".format(recall))
 
     if TRAIN_MODE == 'ensemble':
         if CROSS_VALID_MODE:
             acc = np.zeros(cv_num)
             pred = np.zeros(cv_num)
             recall = np.zeros(cv_num)
+            f1 = np.zeros(cv_num)
             for cn in range(cv_num):
                 (x_train, x_test, y_train, y_test) = train_test_split(im_au_xs_train, im_au_ys_train, test_size=test_size)
                 im_clf = LogisticRegression(random_state=0, solver='newton-cg')
@@ -113,16 +119,19 @@ if __name__ == '__main__':
                 y_pred_all = y_pred_im + y_pred_au
                 y_pred_all = np.where(y_pred_all >= 1, 1, 0)
 
-                acc[cn] = accuracy_score(y_pred_all, y_test)
+                acc[cn] = accuracy_score(y_test, y_pred_all)
                 pred[cn] = precision_score(y_test, y_pred_all)
                 recall[cn] = recall_score(y_test, y_pred_all)
+                f1[cn] = f1_score(y_test, y_pred_all)
 
-            print("Precision:           {}".format(pred))
-            print("Mean precision:  {:.4f}".format(np.mean(pred)))
-            print("Recall   :           {}".format(recall))
-            print("Mean recall   :  {:.4f}".format(np.mean(recall)))
             print("Accuracy:            {}".format(acc))
+            print("Precision:           {}".format(pred))
+            print("Recall:              {}".format(recall))
+            print("F1:                  {}".format(f1))
             print("Mean accuracy:   {:.4f}".format(np.mean(acc)))
+            print("Mean precision:  {:.4f}".format(np.mean(pred)))
+            print("Mean recall   :  {:.4f}".format(np.mean(recall)))
+            print("Mean f1-score:   {:.4f}".format(np.mean(f1)))
 
         else:
             im_clf = LogisticRegression(random_state=0, solver='newton-cg')
@@ -138,9 +147,11 @@ if __name__ == '__main__':
 
             print("Predict: {}".format(y_pred_all))
             print("True:    {}".format(im_au_ys_test))
-            accuracy = accuracy_score(y_pred_all, im_au_ys_test)
+            accuracy = accuracy_score(im_au_ys_test, y_pred_all)
             precision = precision_score(im_au_ys_test, y_pred_all)
             recall = recall_score(im_au_ys_test, y_pred_all)
-            print("Accuracy:  {}".format(accuracy))
-            print("Precision: {}".format(precision))
-            print("Recall:    {}".format(recall))
+            f1 = f1_score(im_au_ys_test, y_pred_all)
+            print("Accuracy:  {:.4f}".format(accuracy))
+            print("Precision: {:.4f}".format(precision))
+            print("Recall:    {:.4f}".format(recall))
+            print("F1-score:  {:.4f}".format(recall))

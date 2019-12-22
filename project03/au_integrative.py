@@ -1,5 +1,5 @@
 import numpy as np
-from LogRegression import accuracy_score
+from sklearn.metrics import accuracy_score
 from sklearn import svm
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import AdaBoostClassifier
@@ -36,7 +36,7 @@ if __name__ == '__main__':
         print("Predict: {}".format(y_pred_all))
         print("True:    {}".format(au_ys_test))
 
-        accuracy = accuracy_score(y_pred_all, au_ys_test)
+        accuracy = accuracy_score(au_ys_test, y_pred_all)
 
         print("accuracy: {}".format(accuracy))
     else:
@@ -46,6 +46,6 @@ if __name__ == '__main__':
         print("Predict: {}".format(y_pred))
         print("True:    {}".format(au_ys_test))
 
-        accuracy = accuracy_score(y_pred, au_ys_test)
+        accuracy = accuracy_score(au_ys_test, y_pred)
 
         print("accuracy: {}".format(accuracy))

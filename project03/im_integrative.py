@@ -1,5 +1,5 @@
 import numpy as np
-from LogRegression import accuracy_score
+from sklearn.metrics import accuracy_score
 from sklearn import svm
 import os
 
@@ -59,5 +59,5 @@ if __name__ == '__main__':
             emotion_ys_idxnum[idx] += 1
         emotion_ys_pred = np.true_divide(emotion_ys_pred, emotion_ys_idxnum)
         emotion_ys_pred = np.where(emotion_ys_pred >= 0.5, 1, 0)
-        accuracy = accuracy_score(emotion_ys_pred, emotion_ys_test)
+        accuracy = accuracy_score(emotion_ys_test, emotion_ys_pred)
         print(accuracy)

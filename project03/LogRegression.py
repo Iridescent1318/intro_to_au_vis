@@ -159,6 +159,8 @@ def cross_validation(xs, ys, k):
         raise Exception("Length of x's and y's should be equal.")
 
 
+# accuracy_score from LogRegression is deprecated
+
 def accuracy_score(y_predict, y_real):
     if y_predict.shape == y_real.shape:
         test_num = y_predict.shape[0]
