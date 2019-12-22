@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from matplotlib import pyplot as plt
-from LogRegression import score, cross_validation, LogRegression
+from LogRegression import accuracy_score, cross_validation, LogRegression
 
 CROSS_VALID_MODE = 1
 
@@ -23,8 +23,8 @@ if __name__ == '__main__':
     loss_visual_step = 10
         
     if CROSS_VALID_MODE:
-        prec = np.zeros(cv_num)
-        prec_skt = np.zeros(cv_num)
+        acc = np.zeros(cv_num)
+        acc_skt = np.zeros(cv_num)
         for cn in range(cv_num):
             x_train, y_train, x_cvtest, y_cvtest = cross_validation(im_xs_train, im_ys_train, k)
             lr = LogRegression(im_xs_train.shape[1])
@@ -32,16 +32,16 @@ if __name__ == '__main__':
             loss = lr.fit(x_train, y_train, max_epoch, 0.18, 1e-4, 'newton', loss_visual_step)
             y_pred = lr.predict(x_cvtest)
             y_pred_skt = skt_lr.predict(x_cvtest)
-            prec[cn] = score(y_pred, y_cvtest)
-            prec_skt[cn] = skt_lr.score(x_cvtest, y_cvtest)
+            acc[cn] = accuracy_score(y_pred, y_cvtest)
+            acc_skt[cn] = skt_lr.score(x_cvtest, y_cvtest)
             print("Prediction: {}".format(y_pred))
-            print("Real:       {}".format(y_cvtest))
+            print("True:       {}".format(y_cvtest))
             plt.plot((np.arange(len(loss))+1) * loss_visual_step, loss)
     
-        print("sklearn LR accuracy: {}".format(prec_skt))
-        print("Precision:           {}".format(prec))
-        print("Mean sklearn LR accuracy: {:.4f}".format(np.mean(prec_skt)))
-        print("Mean precision:           {:.4f}".format(np.mean(prec)))
+        print("sklearn LR accuracy: {}".format(acc_skt))
+        print("Accuracy:           {}".format(acc))
+        print("Mean sklearn LR accuracy: {:.4f}".format(np.mean(acc_skt)))
+        print("Mean accuracy:           {:.4f}".format(np.mean(acc)))
         plt.show()
     else:
         im_xs_test = np.ones((100, 13))
@@ -53,14 +53,14 @@ if __name__ == '__main__':
         lr = LogRegression(im_xs_train.shape[1])
         loss = lr.fit(im_xs_train, im_ys_train, max_epoch, l_rate=0.08, tol=1e-4, method='bgd')
         y_pred_bgd = lr.predict(im_xs_test)
-        prec_bgd = score(y_pred_bgd, im_ys_test)
+        prec_bgd = accuracy_score(y_pred_bgd, im_ys_test)
         print(y_pred_bgd)
-        print("Precision: {}".format(prec_bgd))
+        print("Accuracy: {}".format(prec_bgd))
 
         skt_lr = LogisticRegression(random_state=0, solver='liblinear').fit(im_xs_train, im_ys_train)
         y_pred_skt = skt_lr.predict(im_xs_test)
-        prec_skt = skt_lr.score(im_xs_test, im_ys_test)
+        acc_skt = skt_lr.score(im_xs_test, im_ys_test)
         print(y_pred_skt)
         print(im_ys_test)
-        print("Precision: {}".format(prec_skt))
+        print("Accuracy: {}".format(acc_skt))
         np.save("A_1st_order.npy", y_pred_bgd)

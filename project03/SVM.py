@@ -2,13 +2,13 @@ import numpy as np
 import librosa.display
 from sklearn.linear_model import LogisticRegression
 from sklearn import svm
-from LogRegression import cross_validation, score
+from LogRegression import cross_validation, accuracy_score
 
 FEAT_EXT_MODE = 0
-CROSS_VALID_MODE = 0
+CROSS_VALID_MODE = 1
 
 if __name__ == '__main__':
-    num_mfcc = 1
+    num_mfcc = 2
     if FEAT_EXT_MODE:
         au_test, au_sr = librosa.load("./dataset/train/positive/0/audio.wav")
         au_test = librosa.feature.mfcc(au_test, au_sr, n_mfcc=num_mfcc).reshape(-1)
@@ -48,8 +48,8 @@ if __name__ == '__main__':
     cv_num = 10
 
     if CROSS_VALID_MODE:
-        prec_svm = np.zeros(cv_num)
-        prec_skt = np.zeros(cv_num)
+        acc_svm = np.zeros(cv_num)
+        acc_skt = np.zeros(cv_num)
 
         for cn in range(cv_num):
             x_train, y_train, x_cvtest, y_cvtest = cross_validation(au_xs_train, au_ys_train, k)
@@ -60,20 +60,20 @@ if __name__ == '__main__':
             y_pred_skt = skt_lr.predict(x_cvtest)
             print("Predictions of SVM: {}".format(y_pred_svm))
             print("Predictions of skt: {}".format(y_pred_skt))
-            print("Real:               {}".format(y_cvtest))
-            prec_svm[cn] = score(y_pred_svm, y_cvtest)
-            prec_skt[cn] = score(y_pred_skt, y_cvtest)
+            print("True:               {}".format(y_cvtest))
+            acc_svm[cn] = accuracy_score(y_pred_svm, y_cvtest)
+            acc_skt[cn] = accuracy_score(y_pred_skt, y_cvtest)
 
-        print("Precision of SVM: {}".format(prec_svm))
-        print("Precision of skt: {}".format(prec_skt))
-        print("Mean Precision of SVM: {}".format(np.mean(prec_svm)))
-        print("Mean Precision of skt: {}".format(np.mean(prec_skt)))
+        print("Accuracy of SVM: {}".format(acc_svm))
+        print("Accuracy of skt: {}".format(acc_skt))
+        print("Mean accuracy of SVM: {}".format(np.mean(acc_svm)))
+        print("Mean accuracy of skt: {}".format(np.mean(acc_skt)))
     else:
         clf = svm.SVC(gamma='scale')
         clf.fit(au_xs_train, au_ys_train)
         y_pred = clf.predict(au_xs_test)
-        precision = clf.score(au_xs_test, au_ys_test)
-        print("Precision: {}".format(precision))
+        accuracy = clf.score(au_xs_test, au_ys_test)
         print("Prediction: {}".format(y_pred))
-        print("Real:       {}".format(au_ys_test))
+        print("True:       {}".format(au_ys_test))
+        print("Accuracy: {}".format(accuracy))
         np.save("B.npy", y_pred)

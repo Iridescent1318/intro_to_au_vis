@@ -159,13 +159,13 @@ def cross_validation(xs, ys, k):
         raise Exception("Length of x's and y's should be equal.")
 
 
-def score(y_predict, y_real):
+def accuracy_score(y_predict, y_real):
     if y_predict.shape == y_real.shape:
         test_num = y_predict.shape[0]
-        precision = 0
+        accuracy = 0
         for yp, yr in zip(y_predict, y_real):
-            precision += 1 if yp == yr else 0
-        precision /= test_num
-        return precision
+            accuracy += 1 if yp == yr else 0
+        accuracy /= test_num
+        return accuracy
     else:
         raise Exception("y_predict, y_real are not in the same shape.")

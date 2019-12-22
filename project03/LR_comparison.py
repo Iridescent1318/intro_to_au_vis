@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from matplotlib import pyplot as plt
-from LogRegression import score, cross_validation, LogRegression
+from LogRegression import accuracy_score, cross_validation, LogRegression
 
 if __name__ == '__main__':
     im_xs_train = np.ones((200, 13))
@@ -35,17 +35,19 @@ if __name__ == '__main__':
         loss_newton = lr_newton.fit(x_train, y_train, max_epoch, 0.18, 1e-4, 'newton', loss_visual_step)
         y_pred_bgd = lr_bgd.predict(x_cvtest)
         y_pred_newton = lr_newton.predict(x_cvtest)
-        prec_bgd[cn] = score(y_pred_bgd, y_cvtest)
-        prec_newton[cn] = score(y_pred_newton, y_cvtest)
+        prec_bgd[cn] = accuracy_score(y_pred_bgd, y_cvtest)
+        prec_newton[cn] = accuracy_score(y_pred_newton, y_cvtest)
         prec_skt[cn] = skt_lr.score(x_cvtest, y_cvtest)
-    plt.plot(np.arange(len(loss_bgd)) * loss_visual_step, loss_bgd / loss_bgd[0])
-    plt.plot(np.arange(len(loss_newton)) * loss_visual_step, loss_newton / loss_newton[0])
+    plt.plot(np.arange(len(loss_bgd)) * loss_visual_step, loss_bgd)
+    plt.plot(np.arange(len(loss_newton)) * loss_visual_step, loss_newton)
     plt.legend(["BGD", "Newton"])
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
 
     print("sklearn LR accuracy:      {}".format(prec_skt))
-    print("BGD Precision:            {}".format(prec_bgd))
-    print("Newton Precision:         {}".format(prec_newton))
+    print("BGD accuracy:             {}".format(prec_bgd))
+    print("Newton accuracy:          {}".format(prec_newton))
     print("Mean sklearn LR accuracy: {:.4f}".format(np.mean(prec_skt)))
-    print("BGD mean precision:       {:.4f}".format(np.mean(prec_bgd)))
-    print("Newton mean precision:    {:.4f}".format(np.mean(prec_newton)))
+    print("BGD mean accuracy:        {:.4f}".format(np.mean(prec_bgd)))
+    print("Newton mean accuracy:     {:.4f}".format(np.mean(prec_newton)))
     plt.show()
