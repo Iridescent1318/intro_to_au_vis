@@ -5,7 +5,7 @@ from sklearn import svm
 from LogRegression import cross_validation, score
 
 FEAT_EXT_MODE = 0
-CROSS_VALID_MODE = 1
+CROSS_VALID_MODE = 0
 
 if __name__ == '__main__':
     num_mfcc = 1

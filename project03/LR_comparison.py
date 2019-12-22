@@ -23,6 +23,9 @@ if __name__ == '__main__':
     prec_bgd = np.zeros(cv_num)
     prec_newton = np.zeros(cv_num)
     prec_skt = np.zeros(cv_num)
+    loss_bgd = []
+    loss_newton = []
+
     for cn in range(cv_num):
         x_train, y_train, x_cvtest, y_cvtest = cross_validation(im_xs_train, im_ys_train, k)
         lr_bgd = LogRegression(im_xs_train.shape[1])
@@ -35,9 +38,9 @@ if __name__ == '__main__':
         prec_bgd[cn] = score(y_pred_bgd, y_cvtest)
         prec_newton[cn] = score(y_pred_newton, y_cvtest)
         prec_skt[cn] = skt_lr.score(x_cvtest, y_cvtest)
-        plt.plot((np.arange(len(loss_bgd)) + 1) * loss_visual_step, loss_bgd)
-        plt.plot((np.arange(len(loss_newton)) + 1) * loss_visual_step, loss_newton)
-        plt.legend(["BGD", "Newton"])
+    plt.plot(np.arange(len(loss_bgd)) * loss_visual_step, loss_bgd / loss_bgd[0])
+    plt.plot(np.arange(len(loss_newton)) * loss_visual_step, loss_newton / loss_newton[0])
+    plt.legend(["BGD", "Newton"])
 
     print("sklearn LR accuracy:      {}".format(prec_skt))
     print("BGD Precision:            {}".format(prec_bgd))
