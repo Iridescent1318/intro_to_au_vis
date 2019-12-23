@@ -6,7 +6,7 @@ from LogRegression import cross_validation
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 FEAT_EXT_MODE = 0
-CROSS_VALID_MODE = 1
+CROSS_VALID_MODE = 0
 
 if __name__ == '__main__':
     num_mfcc = 1
@@ -45,8 +45,8 @@ if __name__ == '__main__':
         au_xs_test = np.load("au_xs_test.npy")
         au_ys_test = np.load("./test_result.npy")
 
-    k = 5
-    cv_num = 5
+    k = 10
+    cv_num = 10
 
     if CROSS_VALID_MODE:
         acc_svm = np.zeros(cv_num)

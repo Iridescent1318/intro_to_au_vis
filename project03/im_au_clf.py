@@ -35,8 +35,8 @@ if __name__ == '__main__':
     im_au_ys_train = im_ys_train
     im_au_ys_test = im_ys_test
 
-    cv_num = 20
-    test_size = 0.5
+    cv_num = 10
+    test_size = 0.1
 
     if TRAIN_MODE == 'feat_combine':
         clf_num = 3
@@ -100,6 +100,8 @@ if __name__ == '__main__':
             print("Recall:    {:.4f}".format(recall))
             print("F1-score:  {:.4f}".format(recall))
 
+            np.save("C.npy", y_pred_all)
+
     if TRAIN_MODE == 'ensemble':
         if CROSS_VALID_MODE:
             acc = np.zeros(cv_num)
@@ -155,3 +157,5 @@ if __name__ == '__main__':
             print("Precision: {:.4f}".format(precision))
             print("Recall:    {:.4f}".format(recall))
             print("F1-score:  {:.4f}".format(recall))
+
+            np.save("C.npy", y_pred_all)

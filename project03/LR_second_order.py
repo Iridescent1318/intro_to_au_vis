@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from LogRegression import cross_validation, LogRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-CROSS_VALID_MODE = 1
+CROSS_VALID_MODE = 0
 
 if __name__ == '__main__':
     im_xs_train = np.ones((200, 13))
@@ -18,8 +18,8 @@ if __name__ == '__main__':
             im_xs_train[i, :] = np.load("./dataset/train/negative/{}/feat.npy".format(i-100))
             im_ys_train[i] = 0
 
-    k = 5
-    cv_num = 5
+    k = 10
+    cv_num = 10
     max_epoch = 500
     loss_visual_step = 10
 
@@ -81,8 +81,6 @@ if __name__ == '__main__':
         f1_newton = f1_score(im_ys_test, y_pred_newton)
         print(y_pred_newton)
         print(im_ys_test)
-        print("Newton method accuracy: {:.4f} precision: {:.4f} recall: {:.4f} f1-score: {:.4f}".format(
-            acc_newton, prec_newton, recall_newton, f1_newton))
 
         skt_lr = LogisticRegression(random_state=0, solver='newton-cg').fit(im_xs_train, im_ys_train)
         y_pred_skt = skt_lr.predict(im_xs_test)
@@ -92,7 +90,9 @@ if __name__ == '__main__':
         f1_skt = f1_score(im_ys_test, y_pred_skt)
         print(y_pred_skt)
         print(im_ys_test)
+        print("Newton method accuracy: {:.4f} precision: {:.4f} recall: {:.4f} f1-score: {:.4f}".format(
+            acc_newton, prec_newton, recall_newton, f1_newton))
         print("          skt accuracy: {:.4f} precision: {:.4f} recall: {:.4f} f1-score: {:.4f}".format(
             acc_skt, prec_skt, recall_skt, f1_skt))
 
-        np.save("A_2nd_order.npy", y_pred_skt)
+        np.save("A.npy", y_pred_skt)
