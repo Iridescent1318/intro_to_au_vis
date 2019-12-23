@@ -105,4 +105,4 @@ if __name__ == '__main__':
         print("Precision:  {:.4f}".format(accuracy))
         print("Recall:     {:.4f}".format(accuracy))
         print("F1-score  : {:.4f}".format(accuracy))
-        np.save("B.npy", y_pred)
+        # np.save("B.npy", y_pred)

@@ -95,4 +95,4 @@ if __name__ == '__main__':
         print("          skt accuracy: {:.4f} precision: {:.4f} recall: {:.4f} f1-score: {:.4f}".format(
             acc_skt, prec_skt, recall_skt, f1_skt))
 
-        np.save("A.npy", y_pred_skt)
+        # np.save("A.npy", y_pred_skt)

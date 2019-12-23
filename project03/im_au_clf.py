@@ -100,7 +100,7 @@ if __name__ == '__main__':
             print("Recall:    {:.4f}".format(recall))
             print("F1-score:  {:.4f}".format(recall))
 
-            np.save("C.npy", y_pred_all)
+            # np.save("C.npy", y_pred_all)
 
     if TRAIN_MODE == 'ensemble':
         if CROSS_VALID_MODE:
@@ -158,4 +158,4 @@ if __name__ == '__main__':
             print("Recall:    {:.4f}".format(recall))
             print("F1-score:  {:.4f}".format(recall))
 
-            np.save("C.npy", y_pred_all)
+            # np.save("C.npy", y_pred_all)
