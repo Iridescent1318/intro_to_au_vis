@@ -16,9 +16,9 @@ if __name__ == '__main__':
             im_xs_train[i, :] = np.load("./dataset/train/negative/{}/feat.npy".format(i-100))
             im_ys_train[i] = 0
 
-    k = 4
+    k = 5
     cv_num = 1
-    max_epoch = 1000
+    max_epoch = 500
     loss_visual_step = 10
 
     prec_bgd = np.zeros(cv_num)

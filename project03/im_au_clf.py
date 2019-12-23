@@ -4,7 +4,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, accuracy_score, f1_score
 
-CROSS_VALID_MODE = 0
+CROSS_VALID_MODE = 1
 TRAIN_MODE = 'ensemble'
 
 if __name__ == '__main__':
@@ -35,8 +35,8 @@ if __name__ == '__main__':
     im_au_ys_train = im_ys_train
     im_au_ys_test = im_ys_test
 
-    cv_num = 10
-    test_size = 0.1
+    cv_num = 5
+    test_size = 0.2
 
     if TRAIN_MODE == 'feat_combine':
         clf_num = 3

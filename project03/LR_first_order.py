@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from LogRegression import cross_validation, LogRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-CROSS_VALID_MODE = 0
+CROSS_VALID_MODE = 1
 
 if __name__ == '__main__':
     im_xs_train = np.ones((200, 13))
@@ -63,6 +63,8 @@ if __name__ == '__main__':
             np.mean(acc_skt), np.mean(prec_skt), np.mean(recall_skt), np.mean(f1_skt)))
         print("Mean accuracy:            {:.4f} precision: {:.4f} recall: {:.4f} f1-score: {:.4f}".format(
             np.mean(acc), np.mean(prec), np.mean(recall), np.mean(f1)))
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
         plt.show()
     else:
         im_xs_test = np.ones((100, 13))
