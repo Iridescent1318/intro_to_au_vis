@@ -4,7 +4,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_score, recall_score, accuracy_score, f1_score
 
-CROSS_VALID_MODE = 0
+CROSS_VALID_MODE = 1
 TRAIN_MODE = 'ensemble'
 
 if __name__ == '__main__':
@@ -20,7 +20,6 @@ if __name__ == '__main__':
             im_ys_train[i] = 0
 
     im_xs_test = np.ones((100, 13))
-    im_ys_test = np.load("./test_result.npy")
 
     for i in range(100):
         im_xs_test[i, :] = np.load("./dataset/test/{}/feat.npy".format(i))
@@ -28,15 +27,13 @@ if __name__ == '__main__':
     au_xs_train = np.load("au_xs_train.npy")
     au_ys_train = np.load("au_ys_train.npy")
     au_xs_test = np.load("au_xs_test.npy")
-    au_ys_test = np.load("test_result.npy")
 
     im_au_xs_train = np.append(im_xs_train, au_xs_train, axis=1)
     im_au_xs_test = np.append(im_xs_test, au_xs_test, axis=1)
     im_au_ys_train = im_ys_train
-    im_au_ys_test = im_ys_test
 
-    cv_num = 10
-    test_size = 0.1
+    cv_num = 5
+    test_size = 0.2
 
     if TRAIN_MODE == 'feat_combine':
         clf_num = 3
@@ -90,15 +87,6 @@ if __name__ == '__main__':
             y_pred_all = np.where(y_pred_all > clf_num / 2, 1, 0)
 
             print("Predict: {}".format(y_pred_all))
-            print("True:    {}".format(im_au_ys_test))
-            accuracy = accuracy_score(im_au_ys_test, y_pred_all)
-            precision = precision_score(im_au_ys_test, y_pred_all)
-            recall = recall_score(im_au_ys_test, y_pred_all)
-            f1 = f1_score(im_au_ys_test, y_pred_all)
-            print("Accuracy:  {:.4f}".format(accuracy))
-            print("Precision: {:.4f}".format(precision))
-            print("Recall:    {:.4f}".format(recall))
-            print("F1-score:  {:.4f}".format(recall))
 
             # np.save("C.npy", y_pred_all)
 
@@ -148,14 +136,5 @@ if __name__ == '__main__':
             y_pred_all = np.where(y_pred_all >= 1, 1, 0)
 
             print("Predict: {}".format(y_pred_all))
-            print("True:    {}".format(im_au_ys_test))
-            accuracy = accuracy_score(im_au_ys_test, y_pred_all)
-            precision = precision_score(im_au_ys_test, y_pred_all)
-            recall = recall_score(im_au_ys_test, y_pred_all)
-            f1 = f1_score(im_au_ys_test, y_pred_all)
-            print("Accuracy:  {:.4f}".format(accuracy))
-            print("Precision: {:.4f}".format(precision))
-            print("Recall:    {:.4f}".format(recall))
-            print("F1-score:  {:.4f}".format(recall))
 
             # np.save("C.npy", y_pred_all)

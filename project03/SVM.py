@@ -6,17 +6,16 @@ from LogRegression import cross_validation
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 FEAT_EXT_MODE = 0
-CROSS_VALID_MODE = 0
+CROSS_VALID_MODE = 1
 
 if __name__ == '__main__':
     num_mfcc = 1
-    if FEAT_EXT_MODE:
+    if FEAT_EXT_MODE:  # very slow
         au_test, au_sr = librosa.load("./dataset/train/positive/0/audio.wav")
         au_test = librosa.feature.mfcc(au_test, au_sr, n_mfcc=num_mfcc).reshape(-1)
         au_xs_train = np.ones((200, au_test.shape[0]))
         au_xs_test = np.ones((100, au_test.shape[0]))
         au_ys_train = np.ones(200)
-        au_ys_test = np.load("./test_result.npy")
 
         for i in range(200):
             if i <= 99:
@@ -43,10 +42,9 @@ if __name__ == '__main__':
         au_xs_train = np.load("au_xs_train.npy")
         au_ys_train = np.load("au_ys_train.npy")
         au_xs_test = np.load("au_xs_test.npy")
-        au_ys_test = np.load("./test_result.npy")
 
-    k = 10
-    cv_num = 10
+    k = 5
+    cv_num = 5
 
     if CROSS_VALID_MODE:
         acc_svm = np.zeros(cv_num)
@@ -95,14 +93,5 @@ if __name__ == '__main__':
         clf = svm.SVC(gamma='scale')
         clf.fit(au_xs_train, au_ys_train)
         y_pred = clf.predict(au_xs_test)
-        accuracy = accuracy_score(au_ys_test, y_pred)
-        precision = precision_score(au_ys_test, y_pred)
-        recall = recall_score(au_ys_test, y_pred)
-        f1 = f1_score(au_ys_test, y_pred)
         print("Prediction: {}".format(y_pred))
-        print("True:       {}".format(au_ys_test))
-        print("Accuracy:   {:.4f}".format(accuracy))
-        print("Precision:  {:.4f}".format(accuracy))
-        print("Recall:     {:.4f}".format(accuracy))
-        print("F1-score  : {:.4f}".format(accuracy))
         # np.save("B.npy", y_pred)

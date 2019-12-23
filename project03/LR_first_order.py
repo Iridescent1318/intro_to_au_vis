@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from LogRegression import cross_validation, LogRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-CROSS_VALID_MODE = 0
+CROSS_VALID_MODE = 1
 
 if __name__ == '__main__':
     im_xs_train = np.ones((200, 13))
@@ -66,7 +66,6 @@ if __name__ == '__main__':
         plt.show()
     else:
         im_xs_test = np.ones((100, 13))
-        im_ys_test = np.load("./test_result.npy")
 
         for i in range(100):
             im_xs_test[i, :] = np.load("./dataset/test/{}/feat.npy".format(i))
@@ -74,24 +73,11 @@ if __name__ == '__main__':
         lr = LogRegression(im_xs_train.shape[1])
         loss = lr.fit(im_xs_train, im_ys_train, max_epoch, l_rate=0.18, tol=1e-4, method='bgd')
         y_pred_bgd = lr.predict(im_xs_test)
-        acc_bgd = accuracy_score(im_ys_test, y_pred_bgd)
-        prec_bgd = precision_score(im_ys_test, y_pred_bgd)
-        recall_bgd = recall_score(im_ys_test, y_pred_bgd)
-        f1_bgd = f1_score(im_ys_test, y_pred_bgd)
-        print(y_pred_bgd)
-        print(im_ys_test)
-        print("          BGD accuracy: {:.4f} precision: {:.4f} recall: {:.4f} f1-score: {:.4f}".format(
-            acc_bgd, prec_bgd, recall_bgd, f1_bgd))
+        print("BGD predictions: {}".format(y_pred_bgd))
 
         skt_lr = LogisticRegression(random_state=0, solver='liblinear').fit(im_xs_train, im_ys_train)
         y_pred_skt = skt_lr.predict(im_xs_test)
-        acc_skt = accuracy_score(im_ys_test, y_pred_skt)
-        prec_skt = precision_score(im_ys_test, y_pred_skt)
-        recall_skt = recall_score(im_ys_test, y_pred_skt)
-        f1_skt = f1_score(im_ys_test, y_pred_skt)
-        print(y_pred_skt)
-        print(im_ys_test)
-        print("          skt accuracy: {:.4f} precision: {:.4f} recall: {:.4f} f1-score: {:.4f}".format(
-            acc_skt, prec_skt, recall_skt, f1_skt))
+
+        print("skt predictions: {}".format(y_pred_skt))
 
         # np.save("A_1st_order.npy", y_pred_skt)
